@@ -1,0 +1,11 @@
+{
+    "name": "My TypeScript Extension",
+    "description": "An extension made with TypeScript",
+    "uuid": "move_resize_windows@standa31415.gmail.com",
+    "url": "https://github.com/example/move_resize_windows",
+    "settings-schema": "org.gnome.shell.extensions.move_resize_windows",
+    "shell-version": [
+        "49",
+        "50"
+    ]
+}

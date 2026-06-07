@@ -1,0 +1,28 @@
+{
+  "name": "move_resize_windows",
+  "version": "0.0.0",
+  "description": "A TypeScript GNOME Extension move_resize_windows",
+  "type": "module",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/example/move_resize_windows.git"
+  },
+  "author": "Standa Mitrega <standa31415@gmail.com>",
+  "license": "LGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/example/move_resize_windows/issues"
+  },
+  "homepage": "https://github.com/example/move_resize_windows#readme",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@girs/gjs": "^4.0.4",
+    "@girs/gnome-shell": "^50.0.0"
+  }
+}
