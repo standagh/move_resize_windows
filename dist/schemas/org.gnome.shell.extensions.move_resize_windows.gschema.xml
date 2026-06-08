@@ -16,5 +16,15 @@
       <summary>Move and resize shortcut</summary>
       <description>Keyboard shortcut used to move windows from the notebook display to the external monitor.</description>
     </key>
+    <key name="window-width-overrides" type="a{si}">
+      <default>@a{si} {}</default>
+      <summary>Window width overrides</summary>
+      <description>Custom window widths keyed by external monitor resolution, for example 1920x1080.</description>
+    </key>
+    <key name="window-height-overrides" type="a{si}">
+      <default>@a{si} {}</default>
+      <summary>Window height overrides</summary>
+      <description>Custom window heights keyed by external monitor resolution, for example 1920x1080.</description>
+    </key>
   </schema>
 </schemalist>

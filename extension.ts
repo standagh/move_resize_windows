@@ -7,6 +7,8 @@ import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 const KEY_SKIP_FULLSCREEN = 'skip-fullscreen';
 const KEY_UNMAXIMIZE_BEFORE_RESIZE = 'unmaximize-before-resize';
 const KEY_MOVE_RESIZE_SHORTCUT = 'move-resize-shortcut';
+const KEY_WINDOW_WIDTH_OVERRIDES = 'window-width-overrides';
+const KEY_WINDOW_HEIGHT_OVERRIDES = 'window-height-overrides';
 const WINDOW_WIDTH_MARGIN = 300;
 const WINDOW_HEIGHT_MARGIN = 150;
 
@@ -54,7 +56,8 @@ export default class MoveResizeWindowsExtension extends Extension {
 
     const activeWorkspace = global.workspace_manager.get_active_workspace();
     const workArea = activeWorkspace.get_work_area_for_monitor(targetMonitor);
-    const targetRect = this.computeTargetRect(workArea);
+    const monitorRect = this.getMonitorRect(targetMonitor);
+    const targetRect = this.computeTargetRect(monitorRect);
     const windows = this.getCandidateWindows(targetMonitor);
 
     windows.forEach(window => {
@@ -63,7 +66,7 @@ export default class MoveResizeWindowsExtension extends Extension {
           return;
         }
 
-        const rect = this.constrainRectForWindow(window, workArea, targetRect);
+        const rect = this.constrainRectForWindow(window, monitorRect, workArea, targetRect);
 
         window.move_to_monitor(targetMonitor);
         window.move_frame(true, rect.x, rect.y);
@@ -103,6 +106,17 @@ export default class MoveResizeWindowsExtension extends Extension {
     }
 
     return externalMonitorIndex;
+  }
+
+  private getMonitorRect(monitorIndex: number): Rect {
+    const geometry = global.display.get_monitor_geometry(monitorIndex);
+
+    return {
+      x: geometry.x,
+      y: geometry.y,
+      width: geometry.width,
+      height: geometry.height,
+    };
   }
 
   private getCandidateWindows(targetMonitor: number): Meta.Window[] {
@@ -156,19 +170,40 @@ export default class MoveResizeWindowsExtension extends Extension {
     return true;
   }
 
-  private computeTargetRect(workArea: Rect): Rect {
-    const width = Math.max(1, workArea.width - WINDOW_WIDTH_MARGIN);
-    const height = Math.max(1, workArea.height - WINDOW_HEIGHT_MARGIN);
+  private computeTargetRect(monitorRect: Rect): Rect {
+    const defaultWidth = Math.max(1, monitorRect.width - WINDOW_WIDTH_MARGIN);
+    const defaultHeight = Math.max(1, monitorRect.height - WINDOW_HEIGHT_MARGIN);
+    const width = this.getConfiguredDimension(KEY_WINDOW_WIDTH_OVERRIDES, monitorRect, defaultWidth);
+    const height = this.getConfiguredDimension(KEY_WINDOW_HEIGHT_OVERRIDES, monitorRect, defaultHeight);
 
-    return {
-      x: workArea.x + Math.floor((workArea.width - width) / 2),
-      y: workArea.y + Math.floor((workArea.height - height) / 2),
-      width,
-      height,
-    };
+    return this.centerRect(monitorRect, width, height);
   }
 
-  private constrainRectForWindow(window: Meta.Window, workArea: Rect, rect: Rect): Rect {
+  private getConfiguredDimension(key: string, monitorRect: Pick<Rect, 'width' | 'height'>, defaultValue: number): number {
+    const override = this.getSizeOverrides(key)[this.getResolutionKey(monitorRect)];
+
+    if (typeof override === 'number' && Number.isFinite(override) && override > 0) {
+      return Math.floor(override);
+    }
+
+    return defaultValue;
+  }
+
+  private getSizeOverrides(key: string): Record<string, number> {
+    const value = this.settings?.get_value(key).deepUnpack();
+
+    if (typeof value === 'object' && value !== null) {
+      return value as Record<string, number>;
+    }
+
+    return {};
+  }
+
+  private getResolutionKey(rect: Pick<Rect, 'width' | 'height'>): string {
+    return `${rect.width}x${rect.height}`;
+  }
+
+  private constrainRectForWindow(window: Meta.Window, monitorRect: Rect, workArea: Rect, rect: Rect): Rect {
     let width = Math.min(rect.width, workArea.width);
     let height = Math.min(rect.height, workArea.height);
 
@@ -192,11 +227,28 @@ export default class MoveResizeWindowsExtension extends Extension {
     width = Math.min(Math.max(1, width), workArea.width);
     height = Math.min(Math.max(1, height), workArea.height);
 
+    const centeredOnMonitor = this.centerRect(monitorRect, width, height);
+
+    if (this.isRectWithinBounds(centeredOnMonitor, workArea)) {
+      return centeredOnMonitor;
+    }
+
+    return this.centerRect(workArea, width, height);
+  }
+
+  private centerRect(bounds: Rect, width: number, height: number): Rect {
     return {
-      x: workArea.x + Math.floor((workArea.width - width) / 2),
-      y: workArea.y + Math.floor((workArea.height - height) / 2),
+      x: bounds.x + Math.floor((bounds.width - width) / 2),
+      y: bounds.y + Math.floor((bounds.height - height) / 2),
       width,
       height,
     };
+  }
+
+  private isRectWithinBounds(rect: Rect, bounds: Rect): boolean {
+    return rect.x >= bounds.x
+      && rect.y >= bounds.y
+      && rect.x + rect.width <= bounds.x + bounds.width
+      && rect.y + rect.height <= bounds.y + bounds.height;
   }
 }
