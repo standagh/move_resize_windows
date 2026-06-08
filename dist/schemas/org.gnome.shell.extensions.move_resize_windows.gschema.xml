@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <schemalist>
   <schema id="org.gnome.shell.extensions.move_resize_windows" path="/org/gnome/shell/extensions/move_resize_windows/">
-    <key name="padding-inner" type="i">
-      <default>8</default>
-      <summary>Inner padding</summary>
-      <description>Padding between windows</description>
-    </key>
-    <key name="animate" type="b">
+    <key name="skip-fullscreen" type="b">
       <default>true</default>
-      <summary>Animation</summary>
-      <description>Whether to animate window movement/resizing</description>
+      <summary>Skip fullscreen windows</summary>
+      <description>If true, fullscreen windows are ignored.</description>
+    </key>
+    <key name="unmaximize-before-resize" type="b">
+      <default>true</default>
+      <summary>Unmaximize before resize</summary>
+      <description>If true, maximized windows are unmaximized before moving and resizing.</description>
+    </key>
+    <key name="move-resize-shortcut" type="as">
+      <default>['&lt;Super&gt;&lt;Shift&gt;M']</default>
+      <summary>Move and resize shortcut</summary>
+      <description>Keyboard shortcut used to move windows from the notebook display to the external monitor.</description>
     </key>
   </schema>
 </schemalist>

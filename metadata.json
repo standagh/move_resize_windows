@@ -1,8 +1,8 @@
 {
-    "name": "My TypeScript Extension",
-    "description": "An extension made with TypeScript",
+    "name": "Move & Resize Windows",
+    "description": "Move windows from the notebook display to the external monitor and center them.",
     "uuid": "move_resize_windows@standa31415.gmail.com",
-    "url": "https://github.com/example/move_resize_windows",
+    "url": "https://github.com/standa31415/move_resize_windows",
     "settings-schema": "org.gnome.shell.extensions.move_resize_windows",
     "shell-version": [
         "49",

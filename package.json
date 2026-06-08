@@ -1,19 +1,19 @@
 {
   "name": "move_resize_windows",
   "version": "0.0.0",
-  "description": "A TypeScript GNOME Extension move_resize_windows",
+  "description": "GNOME Shell extension to move windows to one monitor and resize them",
   "type": "module",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/example/move_resize_windows.git"
+    "url": "git+https://github.com/standa31415/move_resize_windows.git"
   },
   "author": "Standa Mitrega <standa31415@gmail.com>",
   "license": "LGPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/example/move_resize_windows/issues"
+    "url": "https://github.com/standa31415/move_resize_windows/issues"
   },
-  "homepage": "https://github.com/example/move_resize_windows#readme",
+  "homepage": "https://github.com/standa31415/move_resize_windows#readme",
   "sideEffects": false,
   "scripts": {
     "build": "tsc"
